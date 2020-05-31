@@ -12,8 +12,11 @@ public class User implements Serializable  {
 	private static final long serialVersionUID = 5257202750799314168L;
 	public String userName;
 	public PublicKey publicKey;
-	
-	 User(String uN,PublicKey publicKey) {
+
+	public User(String signUpUsername){
+		this.userName = signUpUsername;
+	}
+	 protected User(String uN,PublicKey publicKey) {
 		this.userName=uN;
 		this.publicKey = publicKey;
 		

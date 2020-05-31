@@ -1,10 +1,9 @@
 package SlaveServer;//-------------------------------SlaveServer.ClientThread-----------------------------------------------------------
 
 import xoLib.*;
+import xoLib.Exceptions.MessageIsDeadException;
 import xoLib.Exceptions.NotUniqueUserNameException;
 import xoLib.Message.Message;
-import xoLib.Message.MessageHandler;
-import xoLib.Message.MessageType;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -12,24 +11,24 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-class ClientThread extends Thread implements MessageHandler {
+class ClientThread extends Thread {
 
-    protected int clientNumber;
     protected Socket mySocket;
 
     protected ObjectOutputStream output;
     protected ObjectInputStream input;
     protected Boolean active = true;
+    ClientThreadMessageHandler clientMessageHandler;
 
     protected User cUser;
-    ClientsConnectionsManager clientsConnectionsManager;
-    MasterConnectionManger masterConnectionManger;
+
 // -------------------------------constructor------------------------------------------------
 
-    public ClientThread(ClientsConnectionsManager clientsConnectionsManager, MasterConnectionManger masterConnectionManger, int cNum, Socket myCS) {
-        this.clientNumber = cNum;
-        this.clientsConnectionsManager = clientsConnectionsManager;
-        this.masterConnectionManger = masterConnectionManger;
+    public ClientThread(ClientsConnectionsManager clientsConnectionsManager, MasterConnectionManager masterConnectionManager,
+                        int clientNumber, Socket myCS) {
+
+        clientMessageHandler = new ClientThreadMessageHandler(clientNumber, clientsConnectionsManager, masterConnectionManager);
+
         try {
             mySocket = myCS;
             output = new ObjectOutputStream(myCS.getOutputStream());
@@ -46,7 +45,7 @@ class ClientThread extends Thread implements MessageHandler {
 
     public void run() {
 
-        // recive("Welcome to Client.View.X_O Secure chat room");
+        // receive("Welcome to Client.View.X_O Secure chat room");
 
         Thread parent = this;
         clientHandler = new Thread(parent) {
@@ -86,8 +85,8 @@ class ClientThread extends Thread implements MessageHandler {
 
     private void handel(Message receivedMsg) throws NotUniqueUserNameException {
         try {
-            Message.handel(receivedMsg, this);
-        }catch (Exception e){
+            Message.handel(receivedMsg, clientMessageHandler);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -95,7 +94,7 @@ class ClientThread extends Thread implements MessageHandler {
 
     private boolean isValidMsg(Message receivedMsg) {
         if (receivedMsg != null)
-            if (receivedMsg.TTL > 0)
+            if (receivedMsg.getTTL() > 0)
                 return true;
         return false;
     }
@@ -104,12 +103,13 @@ class ClientThread extends Thread implements MessageHandler {
     void sendToClient(Message msg) {
         System.out.println("Sending to cliend \n " + msg.toString());
         Message m = new Message(msg);
-        m.decTTL();
+
 
         try {
+            m.decTTL();
             output.writeObject(m);
             output.flush();
-        } catch (IOException e) {
+        } catch (IOException | MessageIsDeadException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -117,9 +117,6 @@ class ClientThread extends Thread implements MessageHandler {
     }
 
     public void close() {
-        Message m = new Message(clientsConnectionsManager.getServerUser(), null, cUser.userName, MessageType.LOGOUT);
-
-
         try {
 
             this.input.close();
@@ -131,9 +128,7 @@ class ClientThread extends Thread implements MessageHandler {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } finally {
-            clientsConnectionsManager.close(this);
-            masterConnectionManger.sendToMaster(m);
-            clientsConnectionsManager.sendToAll(m);
+
             active = false;
 
         }
@@ -141,71 +136,5 @@ class ClientThread extends Thread implements MessageHandler {
 
     }
 
-    @Override
-    public void register(Message registerMessage) {
 
-
-        String cn = "";
-        cn += clientNumber;
-        cUser = new User(cn, null);
-        //cUser.userName=cn;
-        registerMessage.users = new User[1];
-        registerMessage.users[0] = cUser;
-        registerMessage.TTL = 4;
-        masterConnectionManger.sendToMaster(registerMessage);
-
-    }
-
-    @Override
-    public void publicMessage(Message msg) {
-        clientsConnectionsManager.sendToAll(msg);
-        masterConnectionManger.sendToMaster(msg);
-
-    }
-
-    @Override
-    public void privateMessage(Message msg) {
-        ClientThread pu = clientsConnectionsManager.find(msg.receiver);
-        if (pu == null) {
-            masterConnectionManger.sendToMaster(msg);
-
-        } else {
-            pu.sendToClient(msg);
-        }
-
-    }
-
-    @Override
-    public void onlineUsersRequest(Message message) {
-
-    }
-
-    @Override
-    public void sendToAll(Message message) {
-        clientsConnectionsManager.sendToAll(message);
-    }
-
-    @Override
-    public void logout(Message msg) {
-        close();
-    }
-
-    @Override
-    public void getAllUsers(Message msg) {
-
-        Message m = new Message(clientsConnectionsManager.getServerUser(),
-                msg.sender, "",
-                MessageType.GETALLUSERS);
-        masterConnectionManger.sendToMaster(m);
-    }
-
-    @Override
-    public void newUser(Message msg) {
-
-    }
-
-
-    public void register2(Message message) throws NotUniqueUserNameException {
-
-    }
 }

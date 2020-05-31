@@ -1,7 +1,6 @@
 package xoLib.UnitTests;
 
 import org.junit.jupiter.api.Test;
-import xoLib.Message.ClientMessage;
 import xoLib.Message.Message;
 import xoLib.Message.MessageType;
 import xoLib.SecretUser;
@@ -21,7 +20,7 @@ class MessageTest {
         String privateText = "Private message";
 
 
-        ClientMessage msg = new ClientMessage(sender, receiver, privateText, MessageType.PRIVATE);
+        Message msg = new Message(sender, receiver, privateText, MessageType.PRIVATE);
         Message.encrypt(msg, sender);
 
         int encryptedTextHashCode = msg.enMsg.hashCode();
@@ -45,7 +44,7 @@ class MessageTest {
         SecretUser receiver = SecretUser.generateSecretUser("Receiver");
 
         String privateText = "Private message";
-        ClientMessage msg = new ClientMessage(sender, receiver, privateText, MessageType.PRIVATE);
+        Message msg = new Message(sender, receiver, privateText, MessageType.PRIVATE);
         Message.encrypt(msg, sender);
 
         String decryptedText = Message.decrypt(msg, receiver);

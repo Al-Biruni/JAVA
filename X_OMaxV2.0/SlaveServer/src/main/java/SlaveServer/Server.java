@@ -13,8 +13,9 @@ public class Server {
     final static int clientPort = 6000;
 
     protected SecretUser serverUser;
-     SlaveServerMasterMessageHandler masterRequestHandler;
-    MasterConnectionManger masterConnectionManger;
+
+    MasterMessageHandler masterRequestHandler;
+    MasterConnectionManager masterConnectionManager;
     ClientsConnectionsManager clientsConnectionsManager;
 
 
@@ -22,10 +23,11 @@ public class Server {
         try {
             this.serverUser = SecretUser.generateSecretUser("Server-0");
 
-            masterConnectionManger = new MasterConnectionManger(masterIP, masterPort);
+            masterConnectionManager = new MasterConnectionManager(masterIP, masterPort);
+
             clientsConnectionsManager = new ClientsConnectionsManager(this);
 
-            masterRequestHandler = new SlaveServerMasterMessageHandler(serverUser,clientsConnectionsManager,masterConnectionManger);
+            masterRequestHandler = new MasterMessageHandler(serverUser,clientsConnectionsManager, masterConnectionManager);
 
             System.out.println(
                     "Connected to Master Server on port " + masterPort + "Waiting for clients on port " + clientPort);
@@ -43,26 +45,23 @@ public class Server {
     public void run() throws IOException {
 
         ClientConnectionListener clientConnectionListener = new ClientConnectionListener(clientPort, clientsConnectionsManager);
-        MasterRequestListener masterRequestListener = new MasterRequestListener(this);
+        MasterRequestListener masterRequestListener = new MasterRequestListener(masterRequestHandler,masterConnectionManager.getInputStream());
 
         clientConnectionListener.start();
         masterRequestListener.start();
     }
 
 
-    public SlaveServerMasterMessageHandler getMasterRequestHandler() {
+    public MasterMessageHandler getMasterRequestHandler() {
         return masterRequestHandler;
     }
-
 
     public User getUser() {
         return serverUser;
 
     }
 
-
     public static void main(String[] args) {
-
         try {
            // SecretUser serverUser = SecretUser.generateSecretUser("server-0");
             Server s = new Server();

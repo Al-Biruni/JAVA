@@ -1,6 +1,7 @@
 package ClientJavaInterface.Controller;
 
 import ClientJavaInterface.Model.Client;
+import ClientJavaInterface.Model.ClientMessageHandler;
 import ClientJavaInterface.View.ClientInterfaceListener;
 import xoLib.*;
 import ClientJavaInterface.View.X_O;

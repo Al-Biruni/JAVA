@@ -1,6 +1,5 @@
-package ClientJavaInterface.Controller;
+package ClientJavaInterface.Model;
 
-import ClientJavaInterface.Model.Client;
 import ClientJavaInterface.View.X_O;
 import xoLib.Exceptions.NotUniqueUserNameException;
 import xoLib.Message.Message;
@@ -55,7 +54,6 @@ public class ClientMessageHandler implements MessageHandler {
         for (User u : onUsr)
             if (u != null)
                 win.listModel.addElement(u);
-        // System.out.println(u.userName);
     }
 
     @Override

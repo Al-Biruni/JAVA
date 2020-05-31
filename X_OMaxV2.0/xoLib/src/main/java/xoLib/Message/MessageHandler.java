@@ -6,18 +6,14 @@ import xoLib.Exceptions.* ;
 public interface MessageHandler {
 
 
-    void register(Message registerMessage) throws NotUniqueUserNameException ;
+    void registrationMessage(Message registerMessage) throws NotUniqueUserNameException ;
     void publicMessage(Message msg);
     void privateMessage(Message msg);
+    void onlineUsersMessage(Message message);
 
+    void logoutMessage(Message msg);
 
-    void onlineUsersRequest(Message message);
+    void getAllUsersMessage(Message msg);
 
-    void sendToAll(Message message);
-
-    void logout(Message msg);
-
-    void getAllUsers(Message msg);
-
-    void newUser(Message msg);
+    void newUserMessage(Message msg);
 }

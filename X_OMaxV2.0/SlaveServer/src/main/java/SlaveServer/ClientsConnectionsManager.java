@@ -24,7 +24,7 @@ public class ClientsConnectionsManager {
 
         for (int i = 0; i < maxThreadPool.length; i++)
             if (maxThreadPool[i] == null) {
-                maxThreadPool[i] = new ClientThread(this, server.masterConnectionManger, clientsNum, newClientSocket);
+                maxThreadPool[i] = new ClientThread(this, server.masterConnectionManager, clientsNum, newClientSocket);
                 maxThreadPool[i].start();
                 clientsNum++;
 

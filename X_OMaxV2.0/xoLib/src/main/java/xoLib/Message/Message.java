@@ -15,9 +15,9 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Arrays;
 
-public abstract class Message implements Serializable {
+
+public  class Message implements Serializable {
 
     private static final long serialVersionUID = 2976187782154270436L;
     public User sender = null, receiver = null;
@@ -34,8 +34,21 @@ public abstract class Message implements Serializable {
     protected int TTL = 4;
     public MessageType messageType;
 
+    public Message(User sender, User receiver, String msg, MessageType msgType) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.msgBody = msg;
+        this.messageType = msgType;
+    }
+
+    public Message(User s, String msg) {
+        this.sender = s;
+        this.msgBody = msg;
+        this.messageType = messageType.PUBLIC;
+    }
+
     //clone
-    public Message clone(Message msg) {
+    public Message (Message msg) {
         this.sender = msg.sender;
         this.receiver = msg.receiver;
         this.enMsg = msg.enMsg;
@@ -46,7 +59,6 @@ public abstract class Message implements Serializable {
         this.iv = msg.iv;
         this.key = msg.key;
 
-        return this;
     }
 
 
@@ -56,25 +68,25 @@ public abstract class Message implements Serializable {
         switch (msg.messageType) {
 
             case GETALLUSERS:
-                handler.getAllUsers(msg);
+                handler.getAllUsersMessage(msg);
                 break;
             case ONLINEUSERS:
-                handler.onlineUsersRequest(msg);
+                handler.onlineUsersMessage(msg);
                 break;
             case PRIVATE:
                 handler.privateMessage(msg);
                 break;
             case PUBLIC:
-                handler.sendToAll(msg);
+                handler.publicMessage(msg);
                 break;
             case REGISTER:
-                handler.register(msg);
+                handler.registrationMessage(msg);
                 break;
             case LOGOUT:
-                handler.logout(msg);
+                handler.logoutMessage(msg);
                 break;
             case NEWUSER:
-                handler.newUser(msg);
+                handler.newUserMessage(msg);
                 break;
             default:
                 System.out.println("Default handling case " + msg);
@@ -141,7 +153,6 @@ public abstract class Message implements Serializable {
     public static String decrypt(Message msg, SecretUser receiver) throws Exception {
 
         if (validMessageDigest(msg)) {
-
             try {
                 byte[] key = receiver.decryptDataWithPrivateKey(msg.key);
                 byte[] iv = receiver.decryptDataWithPrivateKey(msg.iv);
@@ -175,7 +186,6 @@ public abstract class Message implements Serializable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "null";
         }
         throw new Exception("message is broken MessageDigest Validation failed ");
     }

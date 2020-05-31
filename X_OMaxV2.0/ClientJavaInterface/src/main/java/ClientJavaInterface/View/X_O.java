@@ -1,17 +1,11 @@
-<<<<<<< HEAD:X_OMaxV2.0/ClientJavaInterface/src/main/java/ClientJavaInterface/View/X_O.java
 package ClientJavaInterface.View;
 
 import ClientJavaInterface.*;
+import ClientJavaInterface.Model.Client;
 import xoLib.Exceptions.MessageCouldnotBeEncryptedException;
 import xoLib.Message.Message;
 import xoLib.User;
-=======
-package Client.View;
 
-import Commons.Exceptions.MessageCouldnotBeEncryptedException;
-import Commons.Message.Message;
-import Commons.User;
->>>>>>> 849689989595f5a55e0e97aa0b3d48b1c88050da:X_OMaxV2.0/Client/src/main/Client/View/X_O.java
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

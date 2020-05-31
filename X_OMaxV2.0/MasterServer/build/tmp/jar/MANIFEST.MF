@@ -1,2 +1,4 @@
 Manifest-Version: 1.0
+Class-Path: libs/xoLib.jar
+Main-Class: MasterServer.MasterServer
 

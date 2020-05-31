@@ -4,12 +4,7 @@ package xoLib;
 import xoLib.Exceptions.MessageCouldnotBeEncryptedException;
 
 import javax.crypto.*;
-
-
-import java.nio.ByteBuffer;
 import java.security.*;
-import java.util.Arrays;
-import java.util.Base64;
 
 public class SecretUser extends User {
     protected static PrivateKey privateKey;

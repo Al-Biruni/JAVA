@@ -1,11 +1,8 @@
 package SlaveServer;
 
-<<<<<<< HEAD:X_OMaxV2.0/SlaveServer/src/main/java/SlaveServer/MasterRequestListener.java
 import xoLib.Exceptions.NotUniqueUserNameException;
 import xoLib.Message.Message;
-=======
-import Commons.Message.Message;
->>>>>>> 849689989595f5a55e0e97aa0b3d48b1c88050da:X_OMaxV2.0/Server/src/main/SlaveServer/MasterRequestListener.java
+
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,11 +10,11 @@ import java.io.ObjectInputStream;
 
 public class MasterRequestListener extends Thread {
     ObjectInputStream masterInputStream;
-    SlaveServerMasterMessageHandler  masterRequestHandler;
+    MasterMessageHandler masterRequestHandler;
 
-    public MasterRequestListener(Server server) {
-        masterRequestHandler = server.getMasterRequestHandler();
-        this.masterInputStream = server.masterConnectionManger.getInputStream();
+    public MasterRequestListener(MasterMessageHandler masterRequestHandler,ObjectInputStream masterInputStream) {
+        this.masterRequestHandler = masterRequestHandler;
+        this.masterInputStream = masterInputStream;
 
     }
 
@@ -46,7 +43,7 @@ public class MasterRequestListener extends Thread {
 
 
     private boolean validMasterRequest(Message masterReq) {
-        if(masterReq == null || masterReq.TTL<=0)
+        if(masterReq == null || !masterReq.isAlive())
             return false;
         return true;
     }

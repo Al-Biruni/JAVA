@@ -7,12 +7,12 @@ import xoLib.Message.MessageHandler;
 import xoLib.Message.MessageType;
 
 
-public class SlaveServerMasterMessageHandler implements MessageHandler {
+public class MasterMessageHandler implements MessageHandler {
 
     ClientsConnectionsManager clientsConnectionsManager;
     User serverUser;
 
-    public SlaveServerMasterMessageHandler(User serverUser, ClientsConnectionsManager clientsConnectionsManager, MasterConnectionManger masterConnectionManger){
+    public MasterMessageHandler(User serverUser, ClientsConnectionsManager clientsConnectionsManager, MasterConnectionManager masterConnectionManager){
         this.clientsConnectionsManager = clientsConnectionsManager;
         this.serverUser = serverUser;
 
@@ -20,29 +20,28 @@ public class SlaveServerMasterMessageHandler implements MessageHandler {
     }
 
 
-    @Override
+
     public void sendToAll(Message message) {
         clientsConnectionsManager.sendToAll(message);
     }
 
     @Override
-    public void logout(Message msg) {
+    public void logoutMessage(Message msg) {
         sendToAll(msg);
     }
 
     @Override
-    public void getAllUsers(Message msg) {
+    public void getAllUsersMessage(Message msg) {
         sendToAll(msg);
     }
 
     @Override
-    public void newUser(Message msg) {
+    public void newUserMessage(Message msg) {
 sendToAll(msg);
     }
 
-
     @Override
-    public void register(Message masterReq) throws  NotUniqueUserNameException{
+    public void registrationMessage(Message masterReq) throws  NotUniqueUserNameException{
         if (masterReq.msgBody.equals("true")) {
             uniqueName(masterReq);
 
@@ -64,6 +63,9 @@ sendToAll(msg);
     public void privateMessage(Message masterReq) {
         clientsConnectionsManager.sendPrivateMsg(masterReq);
     }
+
+
+
 
 
     private void uniqueName(Message masterReq) {
@@ -96,8 +98,8 @@ sendToAll(msg);
         }
     }
 
-
-    public void onlineUsersRequest(Message masterReq) {
+    @Override
+    public void onlineUsersMessage(Message masterReq) {
         for (ClientThread ct : clientsConnectionsManager.getActiveClients())
             if (ct.cUser != null)// didn't finish registration yet
                 if (masterReq.receiver.userName.equals(ct.cUser.userName))

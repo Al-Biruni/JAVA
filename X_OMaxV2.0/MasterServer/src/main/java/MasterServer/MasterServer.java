@@ -1,11 +1,4 @@
-<<<<<<< HEAD:X_OMaxV2.0/MasterServer/src/main/java/MasterServer/MasterServer.java
 package MasterServer;
-=======
-package masterServer;
-
-import Commons.SecretUser;
-import Commons.User;
->>>>>>> 849689989595f5a55e0e97aa0b3d48b1c88050da:X_OMaxV2.0/MasterServer/src/main/masterServer/MasterServer.java
 
 import xoLib.SecretUser;
 import xoLib.User;
