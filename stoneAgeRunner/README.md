@@ -1,1 +1,1 @@
-run main 
+2D grid game and a grid solver; that uses blind and informed search strategies to find optimal solutions for random grids; while maintaining best optimization techniques to guarantee the code runs in minimal time and memory space.
